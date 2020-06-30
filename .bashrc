@@ -2,6 +2,8 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+bind 'TAB':menu-complete
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -111,17 +113,11 @@ if ! shopt -oq posix; then
   fi
 fi
 
+if [ -f /etc/bash_completion ]; then
+ . /etc/bash_completion
+fi
 
-export PROMPT_DIRTRIM=2
-#truncates prompt with abbrs
-#PROMPT_COMMAND='PS1X=$(p="${PWD#${HOME}}"; [ "${PWD}" != "${p}" ] && printf "~";IFS=/; for q in ${p:1}; do printf /${q:0:1}; done; printf "${q:1}")'
-
-#prompt colorizers -- fubar, screws with gnu readline
-#PS1='\e[33;33m\][\u@\h]\e[2;49;37m\] ${PS1X} \e[33;33m\]$\e[0;37m\] '
-#PS1='\e[33;33m[\u@\h]\e[2;49;37m ${PS1X} \e[33;33m$\e[0;37m '
-#PS1='\e[38;5;208m[\u@\h]\e[2;49;37m ${PS1X} \e[38;5;208m$\e[0;37m '
-
-
+export PROMPT_DIRTRIM=2 #prompt style
 alias pip='pip3'
 alias py='python3'
 
@@ -155,12 +151,17 @@ alias gopp='cd ~/Insync/fburdelliv@gmail.com/Google\ Drive/personal/projects'
 alias gohf='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank'
 alias gohs='cd ~/Insync/frank@pahdcc.com/Google\ Drive/2020\ Cycle'
 alias gohm='cd ~/Insync/frank@pahdcc.com/Google\ Drive/2020\ Cycle/HDCC\ Campaign\ Matierals'
+
 alias gohp='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/program'
 alias gohn='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/notes'
+alias gohsp='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/specialProjects'
+
 alias gohd='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/program/data'
+alias goht='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/program/targeting'
 alias gohe='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/program/data/projects/env'
 alias goha='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/program/admin'
-alias gohsp='cd ~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/specialProjects'
+
+alias gopix='open ~/Pictures'
 
 alias path_hd='~/Insync/frank@pahdcc.com/Google\ Drive/frank/hdcc_frank/program/data'
 
@@ -172,6 +173,14 @@ alias vicron='sudo crontab -e'
 
 alias cronlog='grep CRON /var/log/syslog'
 
+alias findd='find . -type d -name'
+alias findf='find . -name'
+
+alias todo="vim '/home/frank/Insync/frank@pahdcc.com/Google Drive/frank/hdcc_frank/notes/todo.txt'"
+
+alias xdf='pdflatex'
+
+alias pathsty='sudo cp *.sty /usr/share/texmf/tex/latex/'
 
 #enables tab titling
 function set-title() {
@@ -181,4 +190,14 @@ function set-title() {
   TITLE="\[\e]2;$*\a\]"
   PS1=${ORIG}${TITLE}
 }
+
+#enables path removal
+function rm-path {
+  # Delete path by parts so we can never accidentally remove sub paths
+  PATH=${PATH//":$1:"/":"} # delete any instances in the middle
+  PATH=${PATH/#"$1:"/} # delete any instance at the beginning
+  PATH=${PATH/%":$1"/} # delete any instance in the at the end
+}
+
+export PATH=/usr/bin/texlive/2020/bin/x86_64-linux:$PATH
 
